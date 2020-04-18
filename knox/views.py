@@ -60,7 +60,12 @@ class LoginView(APIView):
                     status=status.HTTP_403_FORBIDDEN
                 )
         token_ttl = self.get_token_ttl()
-        instance, token = AuthToken.objects.create(request.user, token_ttl)
+        instance, token = AuthToken.objects.create(
+            request.user,
+            token_ttl,
+            token_name=request.data.get('token_name')
+        )
+
         user_logged_in.send(sender=request.user.__class__,
                             request=request, user=request.user)
         data = self.get_post_response_data(request, token, instance)
